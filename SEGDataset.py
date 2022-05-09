@@ -2,18 +2,27 @@ import os
 import numpy as np
 import torch
 from PIL import Image
+import json
 
 # Found there : #https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
 
+#Constants
 img_size=500
+
+
 class SEGDataset(torch.utils.data.Dataset):
     def __init__(self, root, transforms=None):
         self.root = root
         self.transforms = transforms
         # load all image files, sorting them to
         # ensure that they are aligned
-        self.imgs = list(sorted(os.listdir(os.path.join(root, "images"))))
-        self.masks = list(sorted(os.listdir(os.path.join(root, "masks"))))
+        with open('data/kavsir_bboxes.json', 'r') as json_file:
+            json_dict = json.load(json_file)
+
+        self.imgs=list(map(lambda name : name+'.jpg', list(json_dict.keys())))
+        self.masks = list(map(lambda name: name + '.jpg', list(json_dict.keys())))
+
+
 
     def __getitem__(self, idx):
         # load images and masks
