@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
 import torch
 import numpy as np
-from torch.utils.data import Dataset
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
-import json
 from SEGDataset import SEGDataset
 
-
-def get_transform():
-    transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Resize(255),
-                                    transforms.CenterCrop(224)])
-    return transform
+def show_image_masks(img, target):
+    fig, axs = plt.subplots(2)
+    axs[0].imshow(img.permute(1, 2, 0))
+    axs[1].imshow(((-1 * target['masks']) + 1) * 255)
+    plt.show()
 
 def main():
-
     data= SEGDataset('data',transforms.ToTensor())
-    # print(data.__len__())
-    print(data.__getitem__(2))
+    n_data=0
+    img, target=data.__getitem__(n_data)
+    show_image_masks(img, target)
+
 
 if __name__ == '__main__':
     main()

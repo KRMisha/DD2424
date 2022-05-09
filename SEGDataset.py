@@ -4,6 +4,8 @@ import torch
 from PIL import Image
 
 # Found there : #https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
+
+img_size=500
 class SEGDataset(torch.utils.data.Dataset):
     def __init__(self, root, transforms=None):
         self.root = root
@@ -17,21 +19,19 @@ class SEGDataset(torch.utils.data.Dataset):
         # load images and masks
         img_path = os.path.join(self.root, "images", self.imgs[idx])
         mask_path = os.path.join(self.root, "masks", self.masks[idx])
-        img = Image.open(img_path).convert("RGB")
+        img = Image.open(img_path).convert("RGB").resize((img_size,img_size))
         # note that we haven't converted the mask to RGB,
         # because each color corresponds to a different instance
         # with 0 being background
-        mask = Image.open(mask_path)
+        mask = Image.open(mask_path).resize((img_size,img_size))
+
         # convert the PIL Image into a numpy array
         mask = np.array(mask)
+
         mask = np.array(mask<50,dtype=int) #Make the white part = 1 and the black part = 0
 
-        #Resize :
-        img = np.resize(img,(500,500))
-        mask = np.resize(mask, (500, 500))
         # instances are encoded as different colors
         obj_ids = np.unique(mask)
-
         # first id is the background, so remove it
         obj_ids = obj_ids[1:]
 
@@ -40,7 +40,6 @@ class SEGDataset(torch.utils.data.Dataset):
         masks = mask == obj_ids[:, None, None]
         # get bounding box coordinates for each mask
         num_objs = len(obj_ids)
-
         boxes = []
         for i in range(num_objs):
             pos = np.where(masks[i])
@@ -49,7 +48,6 @@ class SEGDataset(torch.utils.data.Dataset):
             ymin = np.min(pos[0])
             ymax = np.max(pos[0])
             boxes.append([xmin, ymin, xmax, ymax])
-
         # convert everything into a torch.Tensor
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
         # there is only one class
