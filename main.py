@@ -5,11 +5,12 @@ import matplotlib.pyplot as plt
 from SEGDataset import SEGDataset
 import json
 from NeuralNetwork import UNet
+from torchsummary import summary
 
 def show_image_masks(img, masks):
     fig, axs = plt.subplots(2)
     axs[0].imshow(img.permute(1, 2, 0))
-    axs[1].imshow(((-1 * masks) + 1) * 255)
+    axs[1].imshow(masks.permute(1, 2, 0))
     plt.show()
 
 def train_test_split(prop_of_train=0.9):
@@ -28,12 +29,18 @@ def main():
     img, masks=train_data.__getitem__(n_data)
     # show_image_masks(img, masks)
 
+    data_loader = torch.utils.data.DataLoader(
+        train_data, batch_size=2, shuffle=True)
+
+    # For Training
+    images, targets = next(iter(data_loader))
+
     #Creating a Network
-    x = torch.randn(size=(1, 1, 512, 512), dtype=torch.float32)
-    print(x.shape)
-    print(img.shape)
-    Unet_network=UNet(in_channels=1)
-    print(Unet_network.forward(x).shape)
+    x = torch.randn(size=(1, 3, 512, 512), dtype=torch.float32)
+
+    Unet_network=UNet(in_channels=3, out_channels=3)
+    print(Unet_network.forward(images).shape)
+    # summar = summary(Unet_network, (1, 512, 512))
 
 if __name__ == '__main__':
     main()

@@ -3,33 +3,8 @@ import torch
 
 #Tutorial there https://towardsdatascience.com/creating-and-training-a-u-net-model-with-pytorch-for-2d-3d-semantic-segmentation-model-building-6ab09d6a0862
 # Open in private mode
+from torchvision.transforms import CenterCrop
 
-def autocrop(encoder_layer: torch.Tensor, decoder_layer: torch.Tensor):
-    """
-    Center-crops the encoder_layer to the size of the decoder_layer,
-    so that merging (concatenation) between levels/blocks is possible.
-    This is only necessary for input sizes != 2**n for 'same' padding and always required for 'valid' padding.
-    """
-    if encoder_layer.shape[2:] != decoder_layer.shape[2:]:
-        ds = encoder_layer.shape[2:]
-        es = decoder_layer.shape[2:]
-        assert ds[0] >= es[0]
-        assert ds[1] >= es[1]
-        encoder_layer = encoder_layer[
-                        :,
-                        :,
-                        ((ds[0] - es[0]) // 2):((ds[0] + es[0]) // 2),
-                        ((ds[1] - es[1]) // 2):((ds[1] + es[1]) // 2)
-                        ]
-    return encoder_layer, decoder_layer
-
-def get_activation(activation: str):
-    if activation == 'relu':
-        return nn.ReLU()
-    elif activation == 'leaky':
-        return nn.LeakyReLU(negative_slope=0.1)
-    elif activation == 'elu':
-        return nn.ELU()
 
 def get_normalization(normalization: str,
                       num_channels: int):
@@ -78,8 +53,8 @@ class DownBlock(nn.Module):
             self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
         # activation layers
-        self.act1 = get_activation(self.activation)
-        self.act2 = get_activation(self.activation)
+        self.act1 = nn.ReLU()
+        self.act2 = nn.ReLU()
 
         # normalization layers
         if self.normalization:
@@ -142,9 +117,9 @@ class UpBlock(nn.Module):
                                     bias=True)
 
         # activation layers
-        self.act0 = get_activation(self.activation)
-        self.act1 = get_activation(self.activation)
-        self.act2 = get_activation(self.activation)
+        self.act0 = nn.ReLU()
+        self.act1 = nn.ReLU()
+        self.act2 = nn.ReLU()
 
         # normalization layers
         if self.normalization:
@@ -162,7 +137,7 @@ class UpBlock(nn.Module):
             decoder_layer: Tensor from the decoder pathway (to be up'd)
         """
         up_layer = self.up(decoder_layer)  # up-convolution/up-sampling
-        cropped_encoder_layer, dec_layer = autocrop(encoder_layer, up_layer)  # cropping
+        cropped_encoder_layer = self.crop(encoder_layer, up_layer)  # cropping
 
         if self.up_mode != 'transposed':
             # We need to reduce the channel dimension with a conv layer
@@ -181,6 +156,14 @@ class UpBlock(nn.Module):
         if self.normalization:
             y = self.norm2(y)  # normalization 2
         return y
+
+    def crop(self, encoder_layer, up_layer):
+        # grab the dimensions of the inputs, and crop the encoder
+        # features to match the dimensions
+        (_, _, H, W) = up_layer.shape
+        encoder_layer_cropped = CenterCrop([H, W])(encoder_layer)
+        # return the cropped features
+        return encoder_layer_cropped
 
 
 class UNet(nn.Module):
