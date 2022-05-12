@@ -27,32 +27,6 @@ class SEGDataset(torch.utils.data.Dataset):
         img_path = os.path.join(self.root, "images", self.imgs[idx])
         mask_path = os.path.join(self.root, "masks", self.masks[idx])
         img = Image.open(img_path).convert("RGB")
-        # note that we haven't converted the mask to RGB,
-        # because each color corresponds to a different instance
-        # with 0 being background
-
-        # ##-----------   Trying new way beginning
-        # mask = Image.open(mask_path).convert("L")
-        # # convert the PIL Image into a numpy array
-        # mask = np.array(mask)
-        # mask = np.array(mask>50,dtype=int) #Make the white part = 1 and the black part = 0
-        #
-        # # instances are encoded as different colors
-        # obj_ids = np.unique(mask)
-        # # first id is the background, so remove it
-        # obj_ids = obj_ids[1:]
-        #
-        # # split the color-encoded mask into a set
-        # # of binary masks
-        # masks = np.array(mask == obj_ids[:, None, None], dtype=int)
-        # masks = 255*masks
-        # # masks = torch.as_tensor(masks, dtype=torch.uint8)
-        # #Convert the masks into pil image again
-        # print(masks.shape)
-        # masks=Image.fromarray(masks,'L')
-        #
-        # ##-----------   Trying new way end
-
         masks = Image.open(mask_path).convert("1")
         if self.transforms is not None:
             img= self.transforms(img)

@@ -19,11 +19,12 @@ PIN_MEMORY = True if DEVICE == "cuda" else False
 # and number of levels in the U-Net model
 NUM_CHANNELS = 3
 NUM_CLASSES = 1
-NUM_LEVELS = 3
+NUM_LEVELS = 5
 # initialize learning rate, number of epochs to train for, and the
 # batch size
+NB_IMAGES=100
 INIT_LR = 0.001
-NUM_EPOCHS = 10
+NUM_EPOCHS = 30
 # BATCH_SIZE = 64
 BATCH_SIZE = 2
 # define the input image dimensions
@@ -38,3 +39,7 @@ BASE_OUTPUT = "output"
 MODEL_PATH = os.path.join(BASE_OUTPUT, "unet_tgs_salt.pth")
 PLOT_PATH = os.path.sep.join([BASE_OUTPUT, "plot.png"])
 TEST_PATHS = os.path.sep.join([BASE_OUTPUT, "test_paths.txt"])
+
+#Define the depth of the network:
+ENCCHANNELS=(3, 64, 128, 256, 512, 1024)
+DECCHANNELS=(1024, 512, 256, 128, 64)

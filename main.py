@@ -11,7 +11,8 @@ def show_image_masks(img, masks):
     fig, axs = plt.subplots(2)
     axs[0].imshow(img.permute(1, 2, 0))
     axs[1].imshow(masks.detach()[0], cmap='gray')
-    plt.show()
+    # plt.show()
+    plt.savefig('test_save.jpg')
 
 def train_test_split(prop_of_train=0.9):
     with open('data/kavsir_bboxes.json', 'r') as json_file:
