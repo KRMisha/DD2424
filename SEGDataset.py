@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 # Found there : #https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
@@ -26,32 +26,38 @@ class SEGDataset(torch.utils.data.Dataset):
         # load images and masks
         img_path = os.path.join(self.root, "images", self.imgs[idx])
         mask_path = os.path.join(self.root, "masks", self.masks[idx])
-        img = Image.open(img_path).convert("RGB").resize((img_size,img_size))
+        img = Image.open(img_path).convert("RGB")
         # note that we haven't converted the mask to RGB,
         # because each color corresponds to a different instance
         # with 0 being background
-        mask = Image.open(mask_path).resize((img_size,img_size))
 
-        # convert the PIL Image into a numpy array
-        mask = np.array(mask)
-        mask = np.array(mask>50,dtype=int) #Make the white part = 1 and the black part = 0
+        # ##-----------   Trying new way beginning
+        # mask = Image.open(mask_path).convert("L")
+        # # convert the PIL Image into a numpy array
+        # mask = np.array(mask)
+        # mask = np.array(mask>50,dtype=int) #Make the white part = 1 and the black part = 0
+        #
+        # # instances are encoded as different colors
+        # obj_ids = np.unique(mask)
+        # # first id is the background, so remove it
+        # obj_ids = obj_ids[1:]
+        #
+        # # split the color-encoded mask into a set
+        # # of binary masks
+        # masks = np.array(mask == obj_ids[:, None, None], dtype=int)
+        # masks = 255*masks
+        # # masks = torch.as_tensor(masks, dtype=torch.uint8)
+        # #Convert the masks into pil image again
+        # print(masks.shape)
+        # masks=Image.fromarray(masks,'L')
+        #
+        # ##-----------   Trying new way end
 
-        # instances are encoded as different colors
-        obj_ids = np.unique(mask)
-        # first id is the background, so remove it
-        obj_ids = obj_ids[1:]
-
-        # split the color-encoded mask into a set
-        # of binary masks
-        masks = np.array(mask == obj_ids[:, None, None], dtype=int)
-        masks = 255*masks
-        # masks = torch.as_tensor(masks, dtype=torch.uint8)
-
+        masks = Image.open(mask_path).convert("1")
         if self.transforms is not None:
             img= self.transforms(img)
             masks= self.transforms(masks)
         return img, masks
-
     def __len__(self):
         return len(self.imgs)
 
