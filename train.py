@@ -11,6 +11,7 @@ import torch
 import time
 import json
 import functions
+import os
 
 with open('data/kavsir_bboxes.json', 'r') as json_file:
     json_dict = json.load(json_file)
@@ -31,9 +32,9 @@ print(f"[INFO] found {len(testDS)} examples in the test set...")
 
 # create the training and test data loaders
 trainLoader = DataLoader(trainDS, shuffle=True, batch_size=config.BATCH_SIZE, pin_memory=config.PIN_MEMORY,
-                         num_workers=0)#TODO : num_workers=os.cpu_count()
+                         num_workers=os.cpu_count())#TODO : num_workers=os.cpu_count()
 testLoader = DataLoader(testDS, shuffle=False, batch_size=config.BATCH_SIZE, pin_memory=config.PIN_MEMORY,
-                        num_workers=0)#TODO : num_workers=os.cpu_count()
+                        num_workers=os.cpu_count())#TODO : num_workers=os.cpu_count()
 
 # initialize our UNet model
 unet = UNet(encChannels=config.ENCCHANNELS, decChannels=config.DECCHANNELS).to(config.DEVICE)
