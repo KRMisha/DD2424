@@ -3,12 +3,10 @@ import numpy as np
 import torch
 from PIL import Image, ImageOps
 
+# Found there: https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
 
-# Found there : #https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
-
-#Constants
+# Constants
 img_size=512
-
 
 class SEGDataset(torch.utils.data.Dataset):
     def __init__(self, root, name_list, transforms=None):
@@ -20,8 +18,6 @@ class SEGDataset(torch.utils.data.Dataset):
         self.imgs=list(map(lambda name : name+'.jpg', name_list))
         self.masks = list(map(lambda name: name + '.jpg', name_list))
 
-
-
     def __getitem__(self, idx):
         # load images and masks
         img_path = os.path.join(self.root, "images", self.imgs[idx])
@@ -32,6 +28,6 @@ class SEGDataset(torch.utils.data.Dataset):
             img= self.transforms(img)
             masks= self.transforms(masks)
         return img, masks
+
     def __len__(self):
         return len(self.imgs)
-
