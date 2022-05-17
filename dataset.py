@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset
 from torchvision.io import read_image, ImageReadMode
 
+
 class KvasirSegDataset(Dataset):
     def __init__(self, root, transform=None):
         self.root = root

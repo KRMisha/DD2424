@@ -7,9 +7,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import os
-from SEGDataset import SEGDataset
+from dataset import KvasirSegDataset
 from torch.utils.data import DataLoader
 
+# TODO: Refactor to work without name_list and filesystem list of test images
+# TODO: Pre-separate test dataset in filesystem? Or reserve a certain number of the "last" sorted image filenames for testing?
+# This could be loaded using train=True, like for other PyTorch datasets
 
 def prepare_plot(origImage, origMask, predMask,id):
     # initialize our figure
@@ -27,14 +30,14 @@ def prepare_plot(origImage, origMask, predMask,id):
     plt.savefig(os.path.join(config.TEST_IMAGES_PATHS,str(id)+'test_save.jpg'))
 
 
-def make_predictions(model, imageNames):
+def make_predictions(model, test_dataloader):
     # set model to evaluation mode
     model.eval()
     # turn off gradient tracking
     acc_list=[]
     with torch.no_grad():
-        testDS = SEGDataset(root=config.DATASET_PATH, name_list=imageNames, transforms=functions.transforms)
-        testLoader = DataLoader(testDS, shuffle=True, batch_size=config.BATCH_SIZE, pin_memory=config.PIN_MEMORY,
+        test_dataset = KvasirSegDataset(root=config.DATASET_PATH, transform=functions.transforms)
+        testLoader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=True, pin_memory=config.PIN_MEMORY,
                                  num_workers=0)
         # load the image from disk, swap its color channels, cast it
         # to float data type, and scale its pixel values
@@ -65,6 +68,3 @@ unet = torch.load(config.MODEL_PATH).to(config.DEVICE)
 
 # make predictions and visualize the results
 make_predictions(unet, name_list)
-
-
-
