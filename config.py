@@ -1,13 +1,10 @@
-# import the necessary packages
+from pathlib import Path
 import torch
 import os
 
+# Dataset path
+DATASET_PATH = Path('data')
 
-# base path of the dataset
-DATASET_PATH = "data"
-# define the path to the images and masks dataset
-IMAGE_DATASET_PATH = os.path.join(DATASET_PATH, "images")
-MASK_DATASET_PATH = os.path.join(DATASET_PATH, "masks")
 # define the test split
 TEST_SPLIT = 0.20
 # determine the device to be used for training and evaluation
@@ -47,4 +44,3 @@ MODEL_PATH = os.path.join(BASE_OUTPUT, "unet_tgs_salt.pth")
 PLOT_PATH = os.path.sep.join([BASE_OUTPUT, "plot-deep"+ str(NUM_LEVELS) + "-Starting : " + str(ENCCHANNELS[1])+".png"])
 TEST_PATHS = os.path.sep.join([BASE_OUTPUT, "test_paths.txt"])
 TEST_IMAGES_PATHS = os.path.sep.join([BASE_OUTPUT, "images_output"])
-
