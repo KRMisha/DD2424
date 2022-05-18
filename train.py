@@ -2,7 +2,7 @@ import config
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import torch
-import time
+
 
 # TODO: Improve (split this function into train and validation during training)
 def train(train_dataloader, valid_dataloader, model, loss_fn, optimizer):
@@ -13,8 +13,6 @@ def train(train_dataloader, valid_dataloader, model, loss_fn, optimizer):
     H = {"train_loss": [], "valid_loss": []}
 
     # loop over epochs
-    print("[INFO] training the network...")
-    startTime = time.time()
     for e in tqdm(range(config.EPOCHS)):
         # set the model in training mode
         model.train()
@@ -57,10 +55,6 @@ def train(train_dataloader, valid_dataloader, model, loss_fn, optimizer):
         print("[INFO] EPOCH: {}/{}".format(e + 1, config.EPOCHS))
         print("Train loss: {:.6f}, Validation loss: {:.4f}".format(
             avgTrainLoss, avgValidLoss))
-    # display the total time needed to perform the training
-    endTime = time.time()
-    print("[INFO] total time taken to train the model: {:.2f}s".format(
-        endTime - startTime))
 
     # plot the training loss
     plt.style.use("ggplot")
