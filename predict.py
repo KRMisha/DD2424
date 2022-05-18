@@ -1,45 +1,43 @@
-import config
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+import config
 
 
-def prepare_plot(origImage, origMask, predMask,id):
-    # initialize our figure
-    figure, ax = plt.subplots(nrows=1, ncols=3, figsize=(10, 10))
-    # plot the original image, its mask, and the predicted mask
-    ax[0].imshow(origImage.permute(1, 2, 0))
-    ax[1].imshow(origMask[0], cmap='gray')
-    ax[2].imshow(predMask[0], cmap='gray')
-    # set the titles of the subplots
-    ax[0].set_title("Image")
-    ax[1].set_title("Original Mask")
-    ax[2].set_title("Predicted Mask")
-    # set the layout of the figure and display it
-    figure.tight_layout()
-    plt.savefig(str(config.PREDICTED_IMAGES_DIRECTORY / f'{id}.jpg'))
-    plt.close(figure)
+def plot_segmentation(x, y, pred, i):
+    fig, axs = plt.subplots(1, 3, constrained_layout=True)
+
+    axs[0].imshow(x.permute(1, 2, 0))
+    axs[1].imshow(y.squeeze(), cmap='gray')
+    axs[2].imshow(pred.squeeze(), cmap='gray')
+
+    axs[0].axis('off')
+    axs[1].axis('off')
+    axs[2].axis('off')
+
+    axs[0].set_title('Image')
+    axs[1].set_title('Ground truth mask')
+    axs[2].set_title('Predicted mask')
+
+    fig.savefig(str(config.PREDICTED_IMAGES_DIRECTORY / f'{i}.jpg'), bbox_inches='tight')
+    plt.close(fig)
 
 
-def make_predictions(model, test_dataloader):
-    # set model to evaluation mode
+def predict(dataloader, model):
     model.eval()
-    # turn off gradient tracking
-    acc_list=[]
+
+    total_pixel_accuracy = 0
+
     with torch.no_grad():
-        # load the image from disk, swap its color channels, cast it
-        # to float data type, and scale its pixel values
-        for i,(images, gtMasks) in enumerate(test_dataloader):
-            # Getting the predicted mask thanks to the image and the model
-            predMasks = model(images)
-            predMasks = torch.sigmoid(predMasks)
-            predMasks = predMasks
-            # filter out the weak predictions and convert them to integers
-            predMasks = (predMasks > config.THRESHOLD) * 255
-            # prepare a plot for visualization
-            for j in range(len(images)):
-                prepare_plot(images[j], gtMasks[j], predMasks[j], i*config.BATCH_SIZE+j)
-                # Compute the accuracy
-                acc_list.append(1-abs(gtMasks[j]-predMasks[j]).sum()/np.prod(images[j].shape[1:3]))
-    acc=np.mean(np.array(acc_list))
-    print("accuracy : ", acc)
+        for i, (x, y) in enumerate(dataloader):
+            pred = model(x)
+            pred = (torch.sigmoid(pred) > config.THRESHOLD) * 255 # TODO: Verify this
+
+            plot_segmentation(x[0], y[0], pred[0], i)
+
+            # Compute pixel accuracy
+            # TODO: Replace/extend this with DICE, IOU or other metric more commonly used for segmentation
+            total_pixel_accuracy += 1 - np.mean(np.abs(y[0].squeeze() - pred[0].squeeze()).numpy())
+
+    pixel_accuracy = total_pixel_accuracy / len(dataloader)
+    print(f'Pixel accuracy on test data: {pixel_accuracy}')

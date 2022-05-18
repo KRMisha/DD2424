@@ -9,7 +9,7 @@ import config
 from dataset import KvasirSegDataset
 import functions # TODO: Reconsider
 from model import UNet
-from predict import make_predictions
+from predict import predict
 from train import train, valid
 
 
@@ -85,7 +85,6 @@ def main():
     test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=functions.transforms)
     test_dataloader = DataLoader(
         test_dataset,
-        batch_size=config.BATCH_SIZE,
         num_workers=0, # TODO: num_workers=os.cpu_count()?
         pin_memory=config.PIN_MEMORY
     )
@@ -95,9 +94,8 @@ def main():
     print('Model loaded from disk')
 
     # Test model
-    # TODO: Improve
     # TODO: Could use CLI arg to predict only, or a separate script
-    make_predictions(model, test_dataloader)
+    predict(test_dataloader, model)
 
 
 if __name__ == '__main__':
