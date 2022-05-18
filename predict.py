@@ -2,7 +2,7 @@ import config
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-import os
+
 
 def prepare_plot(origImage, origMask, predMask,id):
     # initialize our figure
