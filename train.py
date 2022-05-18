@@ -15,7 +15,7 @@ def train(train_dataloader, valid_dataloader, model, loss_fn, optimizer):
     # loop over epochs
     print("[INFO] training the network...")
     startTime = time.time()
-    for e in tqdm(range(config.NUM_EPOCHS)):
+    for e in tqdm(range(config.EPOCHS)):
         # set the model in training mode
         model.train()
         # initialize the total training and validation loss
@@ -54,7 +54,7 @@ def train(train_dataloader, valid_dataloader, model, loss_fn, optimizer):
         H["train_loss"].append(avgTrainLoss.cpu().detach().numpy())
         H["valid_loss"].append(avgValidLoss.cpu().detach().numpy())
         # print the model training and validation information
-        print("[INFO] EPOCH: {}/{}".format(e + 1, config.NUM_EPOCHS))
+        print("[INFO] EPOCH: {}/{}".format(e + 1, config.EPOCHS))
         print("Train loss: {:.6f}, Validation loss: {:.4f}".format(
             avgTrainLoss, avgValidLoss))
     # display the total time needed to perform the training
@@ -67,7 +67,7 @@ def train(train_dataloader, valid_dataloader, model, loss_fn, optimizer):
     plt.figure()
     plt.plot(H["train_loss"], label="train_loss")
     plt.plot(H["valid_loss"], label="valid_loss")
-    plt.title("Training Loss while training UNet - Deep : "+ str(config.NUM_LEVELS) + "- Starting : " + str(config.ENCCHANNELS[1]))
+    plt.title("Training Loss while training UNet - Deep : "+ str(len(config.DECCHANNELS)) + "- Starting : " + str(config.ENCCHANNELS[1]))
     plt.xlabel("Epoch #")
     plt.ylabel("Loss")
     plt.legend(loc="lower left")

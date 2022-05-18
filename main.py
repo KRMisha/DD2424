@@ -48,7 +48,7 @@ def main():
 
     # Loss function and optimizer
     loss_fn = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=config.INIT_LR)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 
     # Train model
     # TODO: Improve (see official PyTorch tutorial conventions)

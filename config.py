@@ -20,25 +20,20 @@ TRAIN_DATASET_SIZE = 760
 VALID_DATASET_SIZE = 120
 TEST_DATASET_SIZE = 120
 
-#Define the depth of the network:
-# ENCCHANNELS=(3, 64, 128, 256, 512, 1024)
-# DECCHANNELS=(1024, 512, 256, 128, 64)
-ENCCHANNELS=(3, 16, 32, 64, 128)
-DECCHANNELS=(128, 64, 32, 16)
-
-# define the number of channels in the input, number of classes,
-# and number of levels in the U-Net model
-NUM_CHANNELS = 3
-NUM_CLASSES = 1
-NUM_LEVELS = len(DECCHANNELS)
-# initialize learning rate, number of epochs to train for, and the
-# batch size
-INIT_LR = 0.001
-NUM_EPOCHS = 50
-# BATCH_SIZE = 64
+# Training hyperparameters
+LEARNING_RATE = 0.001
 BATCH_SIZE = 16
-# define the input image dimensions
+EPOCHS = 50
+
+# Neural network parameters
+# ENCCHANNELS = (3, 64, 128, 256, 512, 1024)
+# DECCHANNELS = (1024, 512, 256, 128, 64)
+ENCCHANNELS = (3, 16, 32, 64, 128)
+DECCHANNELS = (128, 64, 32, 16)
+
+# Threshold to filter out weak predictions
+THRESHOLD = 0.5
+
+# Resized input image dimensions
 INPUT_IMAGE_WIDTH = 512
 INPUT_IMAGE_HEIGHT = 512
-# define threshold to filter weak predictions
-THRESHOLD = 0.5
