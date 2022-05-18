@@ -1,8 +1,7 @@
 import torch
 from torch.utils.data import Dataset
 from torchvision.io import read_image, ImageReadMode
-
-TEST_DATASET_SIZE = 200
+import config
 
 
 class KvasirSegDataset(Dataset):
@@ -13,12 +12,16 @@ class KvasirSegDataset(Dataset):
         self.images = sorted((root / 'images').glob('*.jpg'))
         self.masks = sorted((root / 'masks').glob('*.jpg'))
 
+        if config.TRAIN_DATASET_SIZE + config.VALID_DATASET_SIZE + config.TEST_DATASET_SIZE > len(self.images):
+            raise ValueError('The total size of the training, validation, and test datasets exceeds the size of the full dataset.')
+
         if train:
-            self.images = self.images[:-TEST_DATASET_SIZE]
-            self.masks = self.masks[:-TEST_DATASET_SIZE]
+            total_dataset_size = config.TRAIN_DATASET_SIZE + config.VALID_DATASET_SIZE
+            self.images = self.images[:total_dataset_size]
+            self.masks = self.masks[:total_dataset_size]
         else:
-            self.images = self.images[-TEST_DATASET_SIZE:]
-            self.masks = self.masks[-TEST_DATASET_SIZE:]
+            self.images = self.images[-config.TEST_DATASET_SIZE:]
+            self.masks = self.masks[-config.TEST_DATASET_SIZE:]
 
     def __len__(self):
         return len(self.images)
