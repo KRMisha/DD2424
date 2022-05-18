@@ -6,7 +6,7 @@ import os
 DATASET_PATH = Path('data')
 
 # define the test split
-TEST_SPLIT = 0.20
+TRAIN_VALID_SPLIT_RATIO = 0.20
 # determine the device to be used for training and evaluation
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # determine if we will be pinning memory during data loading
@@ -42,5 +42,4 @@ BASE_OUTPUT = "output"
 # plot, and testing image paths
 MODEL_PATH = os.path.join(BASE_OUTPUT, "unet_tgs_salt.pth")
 PLOT_PATH = os.path.sep.join([BASE_OUTPUT, "plot-deep"+ str(NUM_LEVELS) + "-Starting : " + str(ENCCHANNELS[1])+".png"])
-TEST_PATHS = os.path.sep.join([BASE_OUTPUT, "test_paths.txt"])
 TEST_IMAGES_PATHS = os.path.sep.join([BASE_OUTPUT, "images_output"])

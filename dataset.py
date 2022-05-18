@@ -2,14 +2,23 @@ import torch
 from torch.utils.data import Dataset
 from torchvision.io import read_image, ImageReadMode
 
+TEST_DATASET_SIZE = 200
+
 
 class KvasirSegDataset(Dataset):
-    def __init__(self, root, transform=None):
+    def __init__(self, root, train, transform=None):
         self.root = root
         self.transform = transform
 
         self.images = sorted((root / 'images').glob('*.jpg'))
         self.masks = sorted((root / 'masks').glob('*.jpg'))
+
+        if train:
+            self.images = self.images[:-TEST_DATASET_SIZE]
+            self.masks = self.masks[:-TEST_DATASET_SIZE]
+        else:
+            self.images = self.images[-TEST_DATASET_SIZE:]
+            self.masks = self.masks[-TEST_DATASET_SIZE:]
 
     def __len__(self):
         return len(self.images)
