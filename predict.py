@@ -18,6 +18,7 @@ def prepare_plot(origImage, origMask, predMask,id):
     # set the layout of the figure and display it
     figure.tight_layout()
     plt.savefig(os.path.join(config.TEST_IMAGES_PATHS,str(id)+'test_save.jpg'))
+    plt.close(figure)
 
 
 def make_predictions(model, test_dataloader):
