@@ -1,9 +1,15 @@
 from pathlib import Path
 import torch
-import os
 
 # Dataset path
-DATASET_PATH = Path('data')
+DATASET_DIRECTORY = Path('data')
+
+# Output paths
+# TODO: Make these names specific to each experiment when later running multiple experiments
+OUTPUT_DIRECTORY = Path('output')
+MODEL_PATH = OUTPUT_DIRECTORY / 'model.pth'
+TRAINING_PLOT_PATH = OUTPUT_DIRECTORY / 'training.png'
+PREDICTED_IMAGES_DIRECTORY = OUTPUT_DIRECTORY / 'predictions'
 
 # define the test split
 TRAIN_VALID_SPLIT_RATIO = 0.20
@@ -35,11 +41,3 @@ INPUT_IMAGE_WIDTH = 512
 INPUT_IMAGE_HEIGHT = 512
 # define threshold to filter weak predictions
 THRESHOLD = 0.5
-
-# define the path to the base output directory
-BASE_OUTPUT = "output"
-# define the path to the output serialized model, model training
-# plot, and testing image paths
-MODEL_PATH = os.path.join(BASE_OUTPUT, "unet_tgs_salt.pth")
-PLOT_PATH = os.path.sep.join([BASE_OUTPUT, "plot-deep"+ str(NUM_LEVELS) + "-Starting : " + str(ENCCHANNELS[1])+".png"])
-TEST_IMAGES_PATHS = os.path.sep.join([BASE_OUTPUT, "images_output"])

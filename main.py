@@ -12,8 +12,12 @@ from train import train
 
 
 def main():
+    # Ensure output directories exist
+    config.OUTPUT_DIRECTORY.mkdir(exist_ok=True)
+    config.PREDICTED_IMAGES_DIRECTORY.mkdir(exist_ok=True)
+
     # Load training dataset and split it into train and validation sets
-    dataset = KvasirSegDataset(root=config.DATASET_PATH, train=True, transform=functions.transforms)
+    dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=True, transform=functions.transforms)
     train_size = int(len(dataset) * (1 - config.TRAIN_VALID_SPLIT_RATIO))
     valid_size = len(dataset) - train_size
     train_dataset, valid_dataset = random_split(dataset, [train_size, valid_size])
@@ -46,7 +50,7 @@ def main():
     train(train_dataloader, valid_dataloader, model, loss_function, optimizer)
 
     # Load testing dataset and create testing data loader
-    test_dataset = KvasirSegDataset(root=config.DATASET_PATH, train=False, transform=functions.transforms)
+    test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=functions.transforms)
     test_dataloader = DataLoader(
         test_dataset,
         batch_size=config.BATCH_SIZE,

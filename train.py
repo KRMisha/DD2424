@@ -6,7 +6,6 @@ import time
 
 # TODO: Improve (split this function into train and validation during training)
 def train(train_dataloader, valid_dataloader, model, loss_function, optimizer):
-
     # calculate steps per epoch for training and validation set
     trainSteps = len(train_dataloader)
     validSteps = len(valid_dataloader)
@@ -72,7 +71,7 @@ def train(train_dataloader, valid_dataloader, model, loss_function, optimizer):
     plt.xlabel("Epoch #")
     plt.ylabel("Loss")
     plt.legend(loc="lower left")
-    plt.savefig(config.PLOT_PATH)
+    plt.savefig(str(config.TRAINING_PLOT_PATH))
 
     # serialize the model to disk
     torch.save(model, config.MODEL_PATH)

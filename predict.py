@@ -17,7 +17,7 @@ def prepare_plot(origImage, origMask, predMask,id):
     ax[2].set_title("Predicted Mask")
     # set the layout of the figure and display it
     figure.tight_layout()
-    plt.savefig(os.path.join(config.TEST_IMAGES_PATHS,str(id)+'test_save.jpg'))
+    plt.savefig(str(config.PREDICTED_IMAGES_DIRECTORY / f'{id}.jpg'))
     plt.close(figure)
 
 
