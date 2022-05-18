@@ -27,8 +27,8 @@ class KvasirSegDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = read_image(str(self.images[idx])).type(torch.float) / 255
-        mask = read_image(str(self.masks[idx]), ImageReadMode.GRAY).type(torch.float) / 255
+        image = read_image(str(self.images[idx])).float() / 255
+        mask = read_image(str(self.masks[idx]), ImageReadMode.GRAY).float() / 255
         if self.transform is not None:
             image = self.transform(image)
             mask = self.transform(mask)

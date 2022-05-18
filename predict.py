@@ -30,8 +30,10 @@ def predict(dataloader, model):
 
     with torch.no_grad():
         for i, (x, y) in enumerate(dataloader):
+            x, y = x.to(config.DEVICE), y.to(config.DEVICE)
+
             pred = model(x)
-            pred = (torch.sigmoid(pred) > config.THRESHOLD) * 255 # TODO: Verify this
+            pred = (torch.sigmoid(pred) > config.THRESHOLD).float()
 
             plot_segmentation(x[0], y[0], pred[0], i)
 
