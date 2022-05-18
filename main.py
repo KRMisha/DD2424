@@ -47,12 +47,12 @@ def main():
     model = UNet(encChannels=config.ENCCHANNELS, decChannels=config.DECCHANNELS).to(config.DEVICE)
 
     # Loss function and optimizer
-    loss_function = nn.BCEWithLogitsLoss()
+    loss_fn = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=config.INIT_LR)
 
     # Train model
     # TODO: Improve (see official PyTorch tutorial conventions)
-    train(train_dataloader, valid_dataloader, model, loss_function, optimizer)
+    train(train_dataloader, valid_dataloader, model, loss_fn, optimizer)
 
     # Load testing dataset and create testing data loader
     test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=functions.transforms)

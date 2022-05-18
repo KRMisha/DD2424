@@ -5,7 +5,7 @@ import torch
 import time
 
 # TODO: Improve (split this function into train and validation during training)
-def train(train_dataloader, valid_dataloader, model, loss_function, optimizer):
+def train(train_dataloader, valid_dataloader, model, loss_fn, optimizer):
     # calculate steps per epoch for training and validation set
     trainSteps = len(train_dataloader)
     validSteps = len(valid_dataloader)
@@ -27,7 +27,7 @@ def train(train_dataloader, valid_dataloader, model, loss_function, optimizer):
             (x, y) = (x.to(config.DEVICE), y.to(config.DEVICE))
             # perform a forward pass and calculate the training loss
             pred = model(x)
-            loss = loss_function(pred, y)
+            loss = loss_fn(pred, y)
             # first, zero out any previously accumulated gradients, then
             # perform backpropagation, and then update model parameters
             optimizer.zero_grad()
@@ -46,7 +46,7 @@ def train(train_dataloader, valid_dataloader, model, loss_function, optimizer):
                 (x, y) = (x.to(config.DEVICE), y.to(config.DEVICE))
                 # make the predictions and calculate the validation loss
                 pred = model(x)
-                totalValidLoss += loss_function(pred, y)
+                totalValidLoss += loss_fn(pred, y)
         # calculate the average training and validation loss
         avgTrainLoss = totalTrainLoss / trainSteps
         avgValidLoss = totalValidLoss / validSteps
