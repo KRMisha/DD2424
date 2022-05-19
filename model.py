@@ -34,8 +34,11 @@ class Encoder(nn.Module):
         block_outputs = []
 
         for block in self.blocks:
+            # Apply encoder block
             x = block(x)
             block_outputs.append(x)
+
+            # Apply max pooling
             x = self.pool(x)
 
         return block_outputs
@@ -44,38 +47,27 @@ class Encoder(nn.Module):
 class Decoder(nn.Module):
     def __init__(self, channels=(64, 32, 16)):
         super().__init__()
-        # initialize the number of channels, upsampler blocks, and
-        # decoder blocks
-        self.channels = channels
-        self.upconvs = nn.ModuleList(
-            [nn.ConvTranspose2d(channels[i], channels[i + 1], 2, 2)
-             for i in range(len(channels) - 1)])
-        self.dec_blocks = nn.ModuleList(
-            [Block(channels[i], channels[i + 1])
-             for i in range(len(channels) - 1)])
+        self.up_convolutions = nn.ModuleList([
+            nn.ConvTranspose2d(in_channels, out_channels, 2, 2) for in_channels, out_channels in zip(channels, channels[1:])
+        ])
+        self.blocks = nn.ModuleList([
+            Block(in_channels, out_channels) for in_channels, out_channels in zip(channels, channels[1:])
+        ])
 
-    def forward(self, x, encFeatures):
-        # loop through the number of channels
-        for i in range(len(self.channels) - 1):
-            # pass the inputs through the upsampler blocks
-            x = self.upconvs[i](x)
-            # crop the current features from the encoder blocks,
-            # concatenate them with the current upsampled features,
-            # and pass the concatenated output through the current
-            # decoder block
-            encFeat = self.crop(encFeatures[i], x)
-            x = torch.cat([x, encFeat], dim=1)
-            x = self.dec_blocks[i](x)
-        # return the final decoder output
+    def forward(self, x, encoder_block_outputs):
+        for up_convolution, block, encoder_block_output in zip(self.up_convolutions, self.blocks, encoder_block_outputs):
+            # Perform up-convolution
+            x = up_convolution(x)
+
+            # Crop intermediate features from encoder path and concatenate them with upsampled features
+            cropped_size = x.shape[-2:]
+            cropped_encoder_block_output = T.CenterCrop(cropped_size)(encoder_block_output)
+            x = torch.cat([x, cropped_encoder_block_output], dim=1)
+
+            # Apply decoder block
+            x = block(x)
+
         return x
-
-    def crop(self, encFeatures, x):
-        # grab the dimensions of the inputs, and crop the encoder
-        # features to match the dimensions
-        (_, _, H, W) = x.shape
-        encFeatures = T.CenterCrop([H, W])(encFeatures)
-        # return the cropped features
-        return encFeatures
 
 
 class UNet(nn.Module):
