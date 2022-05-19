@@ -32,7 +32,6 @@ def valid(dataloader, model, loss_fn):
 
     with torch.no_grad():
         for X, y in dataloader:
-            # TODO: Check if necessary by printing tensor device before (in GCP)
             X, y = X.to(config.DEVICE), y.to(config.DEVICE)
             pred = model(X)
             total_loss += loss_fn(pred, y).item()
