@@ -1,32 +1,31 @@
-# import the necessary packages
 import config
-from torch.nn import ConvTranspose2d, Conv2d, MaxPool2d, Module, ModuleList, ReLU
-from torchvision.transforms import CenterCrop
-from torch.nn import functional as F
 import torch
+from torch import nn
+import torch.nn.functional as F
+import torchvision.transforms as T
 
 
-class Block(Module):
+class Block(nn.Module):
     def __init__(self, inChannels, outChannels):
         super().__init__()
         # store the convolution and RELU layers
-        self.conv1 = Conv2d(inChannels, outChannels, 3)
-        self.relu = ReLU()
-        self.conv2 = Conv2d(outChannels, outChannels, 3)
+        self.conv1 = nn.Conv2d(inChannels, outChannels, 3)
+        self.relu = nn.ReLU()
+        self.conv2 = nn.Conv2d(outChannels, outChannels, 3)
 
     def forward(self, x):
         # apply CONV => RELU => CONV block to the inputs and return it
         return self.conv2(self.relu(self.conv1(x)))
 
 
-class Encoder(Module):
+class Encoder(nn.Module):
     def __init__(self, channels=(3, 16, 32, 64)):
         super().__init__()
         # store the encoder blocks and maxpooling layer
-        self.encBlocks = ModuleList(
+        self.encBlocks = nn.ModuleList(
             [Block(channels[i], channels[i + 1])
              for i in range(len(channels) - 1)])
-        self.pool = MaxPool2d(2)
+        self.pool = nn.MaxPool2d(2)
 
     def forward(self, x):
         # initialize an empty list to store the intermediate outputs
@@ -42,16 +41,16 @@ class Encoder(Module):
         return blockOutputs
 
 
-class Decoder(Module):
+class Decoder(nn.Module):
     def __init__(self, channels=(64, 32, 16)):
         super().__init__()
         # initialize the number of channels, upsampler blocks, and
         # decoder blocks
         self.channels = channels
-        self.upconvs = ModuleList(
-            [ConvTranspose2d(channels[i], channels[i + 1], 2, 2)
+        self.upconvs = nn.ModuleList(
+            [nn.ConvTranspose2d(channels[i], channels[i + 1], 2, 2)
              for i in range(len(channels) - 1)])
-        self.dec_blocks = ModuleList(
+        self.dec_blocks = nn.ModuleList(
             [Block(channels[i], channels[i + 1])
              for i in range(len(channels) - 1)])
 
@@ -74,12 +73,12 @@ class Decoder(Module):
         # grab the dimensions of the inputs, and crop the encoder
         # features to match the dimensions
         (_, _, H, W) = x.shape
-        encFeatures = CenterCrop([H, W])(encFeatures)
+        encFeatures = T.CenterCrop([H, W])(encFeatures)
         # return the cropped features
         return encFeatures
 
 
-class UNet(Module):
+class UNet(nn.Module):
     def __init__(self, encChannels=(3, 16, 32, 64),
                  decChannels=(64, 32, 16),
                  nbClasses=1, retainDim=True,
@@ -89,7 +88,7 @@ class UNet(Module):
         self.encoder = Encoder(encChannels)
         self.decoder = Decoder(decChannels)
         # initialize the regression head and store the class variables
-        self.head = Conv2d(decChannels[-1], nbClasses, 1)
+        self.head = nn.Conv2d(decChannels[-1], nbClasses, 1)
         self.retainDim = retainDim
         self.outSize = outSize
 
