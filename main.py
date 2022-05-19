@@ -46,7 +46,7 @@ def main():
     )
 
     # Initialize model
-    model = UNet(encChannels=config.ENCCHANNELS, decChannels=config.DECCHANNELS).to(config.DEVICE)
+    model = UNet(encoder_channels=config.ENCODER_CHANNELS, decoder_channels=config.DECODER_CHANNELS).to(config.DEVICE)
 
     # Loss function and optimizer
     loss_fn = nn.BCEWithLogitsLoss()

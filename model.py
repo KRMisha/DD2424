@@ -1,4 +1,3 @@
-import config
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -22,7 +21,7 @@ class Block(nn.Module):
 
 
 class Encoder(nn.Module):
-    def __init__(self, channels=(3, 16, 32, 64)):
+    def __init__(self, channels):
         super().__init__()
         self.blocks = nn.ModuleList([
             Block(in_channels, out_channels) for in_channels, out_channels in zip(channels, channels[1:])
@@ -45,7 +44,7 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, channels=(64, 32, 16)):
+    def __init__(self, channels):
         super().__init__()
         self.up_convolutions = nn.ModuleList([
             nn.ConvTranspose2d(in_channels, out_channels, 2, 2) for in_channels, out_channels in zip(channels, channels[1:])
@@ -71,32 +70,31 @@ class Decoder(nn.Module):
 
 
 class UNet(nn.Module):
-    def __init__(self, encChannels=(3, 16, 32, 64),
-                 decChannels=(64, 32, 16),
-                 nbClasses=1, retainDim=True,
-                 outSize=(config.INPUT_IMAGE_HEIGHT, config.INPUT_IMAGE_WIDTH)):
+    def __init__(
+        self,
+        encoder_channels=(3, 16, 32, 64),
+        decoder_channels=(64, 32, 16),
+        output_classes=1,
+        retain_dimensions=True
+    ):
         super().__init__()
-        # initialize the encoder and decoder
-        self.encoder = Encoder(encChannels)
-        self.decoder = Decoder(decChannels)
-        # initialize the regression head and store the class variables
-        self.head = nn.Conv2d(decChannels[-1], nbClasses, 1)
-        self.retainDim = retainDim
-        self.outSize = outSize
+        self.encoder = Encoder(encoder_channels)
+        self.decoder = Decoder(decoder_channels)
+        self.segmentation_map = nn.Conv2d(decoder_channels[-1], output_classes, 1)
+        self.retain_dimensions = retain_dimensions
 
     def forward(self, x):
-        # grab the features from the encoder
-        encFeatures = self.encoder(x)
-        # pass the encoder features through decoder making sure that
-        # their dimensions are suited for concatenation
-        decFeatures = self.decoder(encFeatures[::-1][0],
-                                   encFeatures[::-1][1:])
-        # pass the decoder features through the regression head to
-        # obtain the segmentation mask
-        map = self.head(decFeatures)
-        # check to see if we are retaining the original output
-        # dimensions and if so, then resize the output to match them
-        if self.retainDim:
-            map = F.interpolate(map, self.outSize)
-        # return the segmentation map
-        return map
+        # Contracting path
+        encoder_block_outputs = self.encoder(x)
+
+        # Expansive path
+        output = self.decoder(encoder_block_outputs[-1], reversed(encoder_block_outputs[:-1]))
+
+        # Output segmentation map
+        output = self.segmentation_map(output)
+
+        # Resize output to input image dimensions if enabled
+        if self.retain_dimensions:
+            output = F.interpolate(output, x.shape[-2:])
+
+        return output
