@@ -34,14 +34,14 @@ def main():
         train_dataset,
         batch_size=config.BATCH_SIZE,
         shuffle=True,
-        num_workers=0, # TODO: num_workers=os.cpu_count()?
+        num_workers=2,
         pin_memory=config.PIN_MEMORY
     )
     valid_dataloader = DataLoader(
         valid_dataset,
         batch_size=config.BATCH_SIZE,
         shuffle=True,
-        num_workers=0, # TODO: num_workers=os.cpu_count()?
+        num_workers=2,
         pin_memory=config.PIN_MEMORY
     )
 
@@ -83,11 +83,7 @@ def main():
 
     # Load testing dataset and create testing data loader
     test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=functions.transforms)
-    test_dataloader = DataLoader(
-        test_dataset,
-        num_workers=0, # TODO: num_workers=os.cpu_count()?
-        pin_memory=config.PIN_MEMORY
-    )
+    test_dataloader = DataLoader(test_dataset, pin_memory=config.PIN_MEMORY)
 
     # Load trained model
     model = torch.load(config.MODEL_PATH).to(config.DEVICE)
