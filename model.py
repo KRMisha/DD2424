@@ -6,16 +6,17 @@ import torchvision.transforms as T
 
 
 class Block(nn.Module):
-    def __init__(self, inChannels, outChannels):
+    def __init__(self, in_channels, out_channels):
         super().__init__()
-        # store the convolution and RELU layers
-        self.conv1 = nn.Conv2d(inChannels, outChannels, 3)
-        self.relu = nn.ReLU()
-        self.conv2 = nn.Conv2d(outChannels, outChannels, 3)
+        self.conv_relu_stack = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, 3),
+            nn.ReLU(),
+            nn.Conv2d(out_channels, out_channels, 3),
+            nn.ReLU()
+        )
 
     def forward(self, x):
-        # apply CONV => RELU => CONV block to the inputs and return it
-        return self.conv2(self.relu(self.conv1(x)))
+        return self.conv_relu_stack(x)
 
 
 class Encoder(nn.Module):
