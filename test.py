@@ -26,7 +26,7 @@ def plot_segmentation(x, y, pred, i):
 def test(dataloader, model):
     model.eval()
     loss_fn=DiceLoss()
-    dice_coeff = 0
+    total_dice_coefficient = 0
 
     with torch.no_grad():
         for i, (x, y) in enumerate(dataloader):
@@ -39,7 +39,7 @@ def test(dataloader, model):
             plot_segmentation(x[0], y[0], pred[0], i)
 
             # Compute the dice_coeff
-            dice_coeff += 1 - loss_fn(pred_to_acc, y)
+            total_dice_coefficient += 1 - loss_fn(pred_to_acc, y)
 
-    pixel_accuracy = dice_coeff / len(dataloader)
-    print(f'Dice coefficient: {pixel_accuracy}')
+    dice_coefficient = total_dice_coefficient / len(dataloader)
+    print(f'Dice coefficient: {dice_coefficient}')
