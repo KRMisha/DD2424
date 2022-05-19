@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-
 import matplotlib.pyplot as plt
 import torch
-from torch import nn
 from torch.utils.data import DataLoader, random_split
 from tqdm import trange
 import config
@@ -11,6 +9,7 @@ import functions # TODO: Reconsider
 from model import UNet
 from test import test
 from train import train, valid
+from diceloss import DiceLoss
 
 
 def main():
@@ -49,7 +48,7 @@ def main():
     model = UNet(encoder_channels=config.ENCODER_CHANNELS, decoder_channels=config.DECODER_CHANNELS).to(config.DEVICE)
 
     # Loss function and optimizer
-    loss_fn = nn.BCEWithLogitsLoss()
+    loss_fn = DiceLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 
     # Train model

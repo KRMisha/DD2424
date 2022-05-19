@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import torch
 import config
+from diceloss import DiceLoss
 
 
 def plot_segmentation(x, y, pred, i):
@@ -24,21 +25,21 @@ def plot_segmentation(x, y, pred, i):
 
 def test(dataloader, model):
     model.eval()
-
-    total_pixel_accuracy = 0
+    loss_fn=DiceLoss()
+    dice_coeff = 0
 
     with torch.no_grad():
         for i, (x, y) in enumerate(dataloader):
             x, y = x.to(config.DEVICE), y.to(config.DEVICE)
 
             pred = model(x)
+            pred_to_acc=pred
             pred = (torch.sigmoid(pred) > config.THRESHOLD).float()
 
             plot_segmentation(x[0], y[0], pred[0], i)
 
-            # Compute pixel accuracy
-            # TODO: Replace/extend this with DICE, IOU or other metric more commonly used for segmentation
-            total_pixel_accuracy += 1 - torch.mean(torch.abs(y[0].squeeze() - pred[0].squeeze()))
+            # Compute the dice_coeff
+            dice_coeff += 1 - loss_fn(pred_to_acc, y)
 
-    pixel_accuracy = total_pixel_accuracy / len(dataloader)
-    print(f'Pixel accuracy on test data: {pixel_accuracy}')
+    pixel_accuracy = dice_coeff / len(dataloader)
+    print(f'Dice coefficient: {pixel_accuracy}')
