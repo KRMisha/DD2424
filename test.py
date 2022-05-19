@@ -23,7 +23,7 @@ def plot_segmentation(x, y, pred, i):
     plt.close(fig)
 
 
-def predict(dataloader, model):
+def test(dataloader, model):
     model.eval()
 
     total_pixel_accuracy = 0

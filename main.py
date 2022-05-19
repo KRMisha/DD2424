@@ -9,7 +9,7 @@ import config
 from dataset import KvasirSegDataset
 import functions # TODO: Reconsider
 from model import UNet
-from predict import predict
+from test import test
 from train import train, valid
 
 
@@ -94,8 +94,8 @@ def main():
     print('Model loaded from disk')
 
     # Test model
-    # TODO: Could use CLI arg to predict only, or a separate script
-    predict(test_dataloader, model)
+    # TODO: Could use CLI arg to test only, or a separate script
+    test(test_dataloader, model)
 
 
 if __name__ == '__main__':
