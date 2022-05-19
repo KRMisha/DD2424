@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import torch
 import config
 
@@ -7,9 +6,9 @@ import config
 def plot_segmentation(x, y, pred, i):
     fig, axs = plt.subplots(1, 3, constrained_layout=True)
 
-    axs[0].imshow(x.permute(1, 2, 0))
-    axs[1].imshow(y.squeeze(), cmap='gray')
-    axs[2].imshow(pred.squeeze(), cmap='gray')
+    axs[0].imshow(x.cpu().permute(1, 2, 0))
+    axs[1].imshow(y.cpu().squeeze(), cmap='gray')
+    axs[2].imshow(pred.cpu().squeeze(), cmap='gray')
 
     axs[0].axis('off')
     axs[1].axis('off')
@@ -39,7 +38,7 @@ def test(dataloader, model):
 
             # Compute pixel accuracy
             # TODO: Replace/extend this with DICE, IOU or other metric more commonly used for segmentation
-            total_pixel_accuracy += 1 - np.mean(np.abs(y[0].squeeze() - pred[0].squeeze()).numpy())
+            total_pixel_accuracy += 1 - torch.mean(torch.abs(y[0].squeeze() - pred[0].squeeze()))
 
     pixel_accuracy = total_pixel_accuracy / len(dataloader)
     print(f'Pixel accuracy on test data: {pixel_accuracy}')
