@@ -4,6 +4,8 @@ from torch import nn
 import torch.nn.functional as F
 import torchvision.transforms as T
 
+# Inspired by https://amaarora.github.io/2020/09/13/unet.html
+
 
 class Block(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -22,24 +24,21 @@ class Block(nn.Module):
 class Encoder(nn.Module):
     def __init__(self, channels=(3, 16, 32, 64)):
         super().__init__()
-        # store the encoder blocks and maxpooling layer
-        self.encBlocks = nn.ModuleList(
-            [Block(channels[i], channels[i + 1])
-             for i in range(len(channels) - 1)])
+        self.blocks = nn.ModuleList([
+            Block(in_channels, out_channels) for in_channels, out_channels in zip(channels, channels[1:])
+        ])
         self.pool = nn.MaxPool2d(2)
 
     def forward(self, x):
-        # initialize an empty list to store the intermediate outputs
-        blockOutputs = []
-        # loop through the encoder blocks
-        for block in self.encBlocks:
-            # pass the inputs through the current encoder block, store
-            # the outputs, and then apply maxpooling on the output
+        # Store intermediate outputs
+        block_outputs = []
+
+        for block in self.blocks:
             x = block(x)
-            blockOutputs.append(x)
+            block_outputs.append(x)
             x = self.pool(x)
-        # return the list containing the intermediate outputs
-        return blockOutputs
+
+        return block_outputs
 
 
 class Decoder(nn.Module):
