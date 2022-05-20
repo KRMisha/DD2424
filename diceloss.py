@@ -9,7 +9,7 @@ class DiceLoss(nn.Module):
         super().__init__()
 
     def forward(self, input, target):
-        input = nn.Sigmoid()(input)
+        input = torch.sigmoid(input)
         numerator = 2 * torch.sum(input * target) + torch.finfo(torch.float32).eps
         denominator = torch.sum(input) + torch.sum(target) + torch.finfo(torch.float32).eps
         return 1 - numerator / denominator
