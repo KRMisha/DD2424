@@ -13,7 +13,7 @@ PREDICTED_IMAGES_DIRECTORY = OUTPUT_DIRECTORY / 'predictions'
 
 # Device settings for training
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-PIN_MEMORY = DEVICE == 'cuda' # TODO: Investigate this parameter
+PIN_MEMORY = DEVICE == 'cuda'
 
 # Training, validation, and test dataset sizes
 TRAIN_DATASET_SIZE = 760
