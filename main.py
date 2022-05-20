@@ -31,7 +31,7 @@ def main():
     print(f'Input image dimensions: {config.INPUT_IMAGE_DIMENSIONS}')
 
     # Load training dataset and split it into train and validation sets
-    dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=True, transform=transforms.invert)
+    dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=True, transform=transforms.base)
     train_dataset, valid_dataset = random_split(dataset, [config.TRAIN_DATASET_SIZE, config.VALID_DATASET_SIZE])
 
     # Create data loaders

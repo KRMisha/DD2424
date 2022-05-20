@@ -1,6 +1,8 @@
 from torchvision import transforms
 import config
 
+# TODO: Combine these transforms together to have a single composition for data augmentations
+
 base = transforms.Compose([
     transforms.Resize(config.INPUT_IMAGE_DIMENSIONS),
 ])
