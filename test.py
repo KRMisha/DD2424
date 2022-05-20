@@ -25,7 +25,8 @@ def plot_segmentation(x, y, pred, i):
 
 def test(dataloader, model):
     model.eval()
-    loss_fn=DiceLoss()
+
+    dice_loss_fn = DiceLoss()
     total_dice_coefficient = 0
 
     with torch.no_grad():
@@ -33,13 +34,12 @@ def test(dataloader, model):
             x, y = x.to(config.DEVICE), y.to(config.DEVICE)
 
             pred = model(x)
-            pred_to_acc=pred
             pred = (torch.sigmoid(pred) > config.THRESHOLD).float()
 
             plot_segmentation(x[0], y[0], pred[0], i)
 
-            # Compute the dice_coeff
-            total_dice_coefficient += 1 - loss_fn(pred_to_acc, y)
+            # Compute the DICE coefficient
+            total_dice_coefficient += 1 - dice_loss_fn(pred, y)
 
     dice_coefficient = total_dice_coefficient / len(dataloader)
     print(f'Dice coefficient: {dice_coefficient}')
