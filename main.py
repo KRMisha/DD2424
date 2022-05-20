@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, random_split
 from tqdm import trange
 import config
 from dataset import KvasirSegDataset
-import functions # TODO: Reconsider
+import transforms
 from model import UNet
 from test import test
 from train import train, valid
@@ -31,7 +31,7 @@ def main():
     print(f'Input image dimensions: {config.INPUT_IMAGE_DIMENSIONS}')
 
     # Load training dataset and split it into train and validation sets
-    dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=True, transform=functions.transforms)
+    dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=True, transform=transforms.invert)
     train_dataset, valid_dataset = random_split(dataset, [config.TRAIN_DATASET_SIZE, config.VALID_DATASET_SIZE])
 
     # Create data loaders
@@ -87,7 +87,7 @@ def main():
     print('Model saved to disk')
 
     # Load testing dataset and create testing data loader
-    test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=functions.transforms)
+    test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=transforms.base_transforms)
     test_dataloader = DataLoader(test_dataset, pin_memory=config.PIN_MEMORY)
 
     # Load trained model
