@@ -1,3 +1,4 @@
+import torch
 from torch.utils.data import Dataset
 from torchvision.io import read_image, ImageReadMode
 import config
@@ -29,12 +30,10 @@ class KvasirSegDataset(Dataset):
         image = read_image(str(self.images[idx])).float() / 255
         mask = read_image(str(self.masks[idx]), ImageReadMode.GRAY).float() / 255
 
-        rng_state = torch.get_rng_state()
         if self.transform is not None:
+            rng_state = torch.get_rng_state()
             image = self.transform(image)
-
-        torch.set_rng_state(rng_state)
-        if self.transform is not None:
+            torch.set_rng_state(rng_state)
             mask = self.transform(mask)
 
         return image, mask

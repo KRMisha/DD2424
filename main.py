@@ -87,7 +87,7 @@ def main():
     print('Model saved to disk')
 
     # Load testing dataset and create testing data loader
-    test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=transforms.base_transforms)
+    test_dataset = KvasirSegDataset(root=config.DATASET_DIRECTORY, train=False, transform=transforms.base)
     test_dataloader = DataLoader(test_dataset, pin_memory=config.PIN_MEMORY)
 
     # Load trained model
