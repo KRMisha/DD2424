@@ -62,7 +62,7 @@ def main():
     valid_losses = []
     with trange(config.EPOCHS, desc='Training network') as t:
         for _ in t:
-            train_loss = train(train_dataloader, model, loss_fn, optimizer)
+            train_loss = train(train_dataloader, model, loss_fn, optimizer, transform=transforms.augmentations)
             train_losses.append(train_loss)
 
             valid_loss = valid(valid_dataloader, model, loss_fn)

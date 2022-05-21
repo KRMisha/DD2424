@@ -16,9 +16,9 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 PIN_MEMORY = DEVICE == 'cuda'
 
 # Training, validation, and test dataset sizes
-TRAIN_DATASET_SIZE = 760
-VALID_DATASET_SIZE = 120
-TEST_DATASET_SIZE = 120
+TRAIN_DATASET_SIZE = 800
+VALID_DATASET_SIZE = 100
+TEST_DATASET_SIZE = 100
 
 # Training hyperparameters
 LEARNING_RATE = 0.001
