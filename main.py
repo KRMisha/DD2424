@@ -7,10 +7,10 @@ from torch.utils.data import DataLoader, random_split
 from tqdm import trange
 import config
 from dataset import KvasirSegDataset
-import transforms
 from model import UNet
 from test import test
 from train import train, valid
+import transforms
 
 
 def main():
