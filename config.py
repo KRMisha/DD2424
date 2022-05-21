@@ -5,7 +5,6 @@ import torch
 DATASET_DIRECTORY = Path('data')
 
 # Output paths
-# TODO: Make these names specific to each experiment when later running multiple experiments
 OUTPUT_DIRECTORY = Path('output')
 MODEL_PATH = OUTPUT_DIRECTORY / 'model.pth'
 TRAINING_PLOT_PATH = OUTPUT_DIRECTORY / 'training.png'

@@ -69,18 +69,18 @@ def main():
             valid_losses.append(valid_loss)
 
             t.set_postfix(train_loss=train_loss, valid_loss=valid_loss)
-    print('Network training complete')
 
-    # Plot training curve
-    fig, ax = plt.subplots(constrained_layout=True)
-    ax.plot(range(1, len(train_losses) + 1), train_losses, label='Training')
-    ax.plot(range(1, len(valid_losses) + 1), valid_losses, label='Validation')
-    ax.set_xlabel('Epoch')
-    ax.set_ylabel('Loss')
-    ax.set_title('Average loss for each epoch')
-    ax.legend()
-    fig.savefig(str(config.TRAINING_PLOT_PATH), bbox_inches='tight')
-    plt.close(fig)
+            # Plot training curve
+            fig, ax = plt.subplots(constrained_layout=True)
+            ax.plot(range(1, len(train_losses) + 1), train_losses, label='Training')
+            ax.plot(range(1, len(valid_losses) + 1), valid_losses, label='Validation')
+            ax.set_xlabel('Epoch')
+            ax.set_ylabel('Loss')
+            ax.set_title('Average loss for each epoch')
+            ax.legend()
+            fig.savefig(str(config.TRAINING_PLOT_PATH), bbox_inches='tight')
+            plt.close(fig)
+    print('Network training complete')
 
     # Save trained model
     torch.save(model, config.MODEL_PATH)
@@ -95,7 +95,6 @@ def main():
     print('Model loaded from disk')
 
     # Test model
-    # TODO: Could use CLI arg to test only, or a separate script
     test(test_dataloader, model)
 
 
