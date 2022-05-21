@@ -91,7 +91,7 @@ def main():
     test_dataloader = DataLoader(test_dataset, pin_memory=config.PIN_MEMORY)
 
     # Load trained model
-    model = torch.load(config.MODEL_PATH).to(config.DEVICE)
+    model = torch.load(config.MODEL_PATH, map_location=config.DEVICE).to(config.DEVICE)
     print('Model loaded from disk')
 
     # Test model
