@@ -21,17 +21,15 @@ TEST_DATASET_SIZE = 100
 
 # Training hyperparameters
 LEARNING_RATE = 0.001
-BATCH_SIZE = 16
-EPOCHS = 50
+BATCH_SIZE = 40
+EPOCHS = 200
 
 # Neural network parameters
-# ENCODER_CHANNELS = (3, 64, 128, 256, 512, 1024)
-# DECODER_CHANNELS = (1024, 512, 256, 128, 64)
-ENCODER_CHANNELS = (3, 16, 32, 64, 128)
-DECODER_CHANNELS = (128, 64, 32, 16)
+ENCODER_CHANNELS = (3, 128, 256, 512)
+DECODER_CHANNELS = (512, 256, 128)
 
 # Threshold to convert sigmoid to binary class
 THRESHOLD = 0.5
 
 # Resized input image dimensions
-INPUT_IMAGE_DIMENSIONS = (512, 512)
+INPUT_IMAGE_DIMENSIONS = (140, 140)
