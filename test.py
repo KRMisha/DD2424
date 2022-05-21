@@ -38,7 +38,7 @@ def test(dataloader, model):
 
             plot_segmentation(x[0], y[0], pred[0], i)
 
-            # Compute the DICE coefficient
+            # Compute the Dice coefficient
             total_dice_coefficient += 1 - dice_loss_fn(pred, y)
 
     dice_coefficient = total_dice_coefficient / len(dataloader)

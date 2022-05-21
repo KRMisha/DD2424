@@ -3,7 +3,7 @@ from torch import nn
 
 
 class DiceLoss(nn.Module):
-    """Custom loss function to compute DICE loss."""
+    """Custom loss function to compute Dice loss."""
 
     def __init__(self):
         super().__init__()
