@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import torch
 import config
-from diceloss import DiceLoss
+import metrics
 
 
 def plot_segmentation(x, y, pred, i):
@@ -26,8 +26,8 @@ def plot_segmentation(x, y, pred, i):
 def test(dataloader, model):
     model.eval()
 
-    dice_loss_fn = DiceLoss()
     total_dice_coefficient = 0
+    total_iou = 0
 
     with torch.no_grad():
         for i, (x, y) in enumerate(dataloader):
@@ -38,8 +38,12 @@ def test(dataloader, model):
 
             plot_segmentation(x[0], y[0], pred[0], i)
 
-            # Compute the Dice coefficient
-            total_dice_coefficient += 1 - dice_loss_fn(pred, y)
+            # Compute the Dice coefficient and IOU
+            total_dice_coefficient += metrics.dice_coefficient(pred, y)
+            total_iou += metrics.iou(pred, y)
 
     dice_coefficient = total_dice_coefficient / len(dataloader)
     print(f'Dice coefficient: {dice_coefficient}')
+
+    iou = total_iou / len(dataloader)
+    print(f'IOU: {iou}')

@@ -31,7 +31,7 @@ EPOCHS = 50
 ENCODER_CHANNELS = (3, 16, 32, 64, 128)
 DECODER_CHANNELS = (128, 64, 32, 16)
 
-# Threshold to filter out weak predictions
+# Threshold to convert sigmoid to binary class
 THRESHOLD = 0.5
 
 # Resized input image dimensions
