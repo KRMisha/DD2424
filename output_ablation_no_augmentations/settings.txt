@@ -1,0 +1,28 @@
+# Training, validation, and test dataset sizes
+TRAIN_DATASET_SIZE = 800
+VALID_DATASET_SIZE = 100
+TEST_DATASET_SIZE = 100
+
+# Training hyperparameters
+LEARNING_RATE = 0.001
+BATCH_SIZE = 40
+EPOCHS = 200
+
+# Neural network parameters
+ENCODER_CHANNELS = (3, 32, 64, 128)
+DECODER_CHANNELS = (128, 64, 32)
+
+# Threshold to convert sigmoid to binary class
+THRESHOLD = 0.5
+
+# Resized input image dimensions
+INPUT_IMAGE_DIMENSIONS = (140, 140)
+
+---
+
+[21:18<00:00,  6.39s/it, train_loss=0.0141, valid_loss=1.36]
+
+---
+
+Dice coefficient: 0.44983112812042236
+IOU: 0.3293757140636444
